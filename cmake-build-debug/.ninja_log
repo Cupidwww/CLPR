@@ -1,0 +1,20 @@
+# ninja log v5
+601	2715	7537394457433591	CMakeFiles/PlateRecognizeSystem.dir/PlateRecognizeSystem_autogen/mocs_compilation.cpp.obj	dc432bd6b8766c5
+26	601	7537394435788540	C:/Users/Dekki/Desktop/PlateRecogSystem/cmake-build-debug/PlateRecognizeSystem_autogen/mocs_compilation.cpp	dcfdf1d33f7e1ba2
+26	601	7537394435788540	C:/Users/Dekki/Desktop/PlateRecogSystem/cmake-build-debug/PlateRecognizeSystem_autogen/timestamp	dcfdf1d33f7e1ba2
+26	601	7537394435788540	PlateRecognizeSystem_autogen/mocs_compilation.cpp	dcfdf1d33f7e1ba2
+26	601	7537394435788540	PlateRecognizeSystem_autogen/timestamp	dcfdf1d33f7e1ba2
+464	1620	7533923861270904	CMakeFiles/PlateRecognizeSystem.dir/gui/appwindow.cpp.obj	8f5872ac249210cd
+9	312	7535406340005623	build.ninja	833294f82f22f038
+607	2661	7537394456893460	CMakeFiles/PlateRecognizeSystem.dir/main.cpp.obj	d4296371ed9f2a64
+491	1619	7533926447968521	CMakeFiles/PlateRecognizeSystem.dir/gui/MainWindow.cpp.obj	91c4130d868c7b37
+3041	3194	7537394462194701	PlateRecognizeSystem.exe	86a4712607266966
+613	3041	7537394460684349	CMakeFiles/PlateRecognizeSystem.dir/gui/AppWindow.cpp.obj	16eb4ba53dfa0a6c
+27	608	7537395012443080	PlateRecognizeSystem_autogen/timestamp	dcfdf1d33f7e1ba2
+27	608	7537395012443080	PlateRecognizeSystem_autogen/mocs_compilation.cpp	dcfdf1d33f7e1ba2
+27	608	7537395012443080	C:/Users/Dekki/Desktop/PlateRecogSystem/cmake-build-debug/PlateRecognizeSystem_autogen/timestamp	dcfdf1d33f7e1ba2
+27	608	7537395012443080	C:/Users/Dekki/Desktop/PlateRecogSystem/cmake-build-debug/PlateRecognizeSystem_autogen/mocs_compilation.cpp	dcfdf1d33f7e1ba2
+614	2647	7537395033347959	CMakeFiles/PlateRecognizeSystem.dir/main.cpp.obj	d4296371ed9f2a64
+608	2710	7537395033978106	CMakeFiles/PlateRecognizeSystem.dir/PlateRecognizeSystem_autogen/mocs_compilation.cpp.obj	dc432bd6b8766c5
+620	3070	7537395037578944	CMakeFiles/PlateRecognizeSystem.dir/gui/AppWindow.cpp.obj	16eb4ba53dfa0a6c
+3071	3217	7537395039009274	PlateRecognizeSystem.exe	86a4712607266966

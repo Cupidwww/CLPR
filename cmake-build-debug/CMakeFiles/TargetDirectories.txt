@@ -1,0 +1,5 @@
+C:/Users/Dekki/Desktop/PlateRecogSystem/cmake-build-debug/CMakeFiles/PlateRecognizeSystem.dir
+C:/Users/Dekki/Desktop/PlateRecogSystem/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Dekki/Desktop/PlateRecogSystem/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/Dekki/Desktop/PlateRecogSystem/cmake-build-debug/CMakeFiles/PlateRecognizeSystem_autogen_timestamp_deps.dir
+C:/Users/Dekki/Desktop/PlateRecogSystem/cmake-build-debug/CMakeFiles/PlateRecognizeSystem_autogen.dir

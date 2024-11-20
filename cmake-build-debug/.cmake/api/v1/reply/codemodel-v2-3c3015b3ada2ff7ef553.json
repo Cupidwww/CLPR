@@ -1,0 +1,78 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "PlateRecognizeSystem",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "PlateRecognizeSystem::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-PlateRecognizeSystem-Debug-0e73d079c59b42cdeab6.json",
+					"name" : "PlateRecognizeSystem",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "PlateRecognizeSystem_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-PlateRecognizeSystem_autogen-Debug-dce5283b5b5e8ed61a67.json",
+					"name" : "PlateRecognizeSystem_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "PlateRecognizeSystem_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-PlateRecognizeSystem_autogen_timestamp_deps-Debug-9965277a9e305202e148.json",
+					"name" : "PlateRecognizeSystem_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/Dekki/Desktop/PlateRecogSystem/cmake-build-debug",
+		"source" : "C:/Users/Dekki/Desktop/PlateRecogSystem"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}
