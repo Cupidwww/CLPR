@@ -53,7 +53,10 @@ public:
     cv::Mat readImage(std::string path)
     {
         this->source = cv::imread(path, cv::IMREAD_COLOR);
-        // cv::resize(this->source, this->source, cv::Size(), 2, 2);
+        if (this->source.rows <= 250 || this->source.cols <= 300)
+        {
+            cv::resize(this->source, this->source, cv::Size(), 1.5, 1.5, cv::INTER_CUBIC);
+        }
         std::cout << "source: " << this->source.size << std::endl;
         return this->source;
     }
