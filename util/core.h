@@ -129,40 +129,22 @@ public:
         return canny;
     }
 
-    static int getValue_SC(cv::Mat mat, int row, int col)
+    static int getIntValue_SC(cv::Mat mat, int row, int col)
     {
         return mat.at<cv::Vec3i>(row, col)[0];
     }
 
-    static int getMin(cv::Mat mat, int start = 0, int end = -1)
+    static int getMin(cv::Mat mat)
     {
         double result;
-        if (mat.rows == 1)
-        {
-            if (end == -1) end = mat.cols;
-            cv::minMaxLoc(mat.colRange(start, end).clone(), &result);
-        }
-        else
-        {
-            if (end == -1) end = mat.rows;
-            cv::minMaxLoc(mat.rowRange(start, end).clone(), &result);
-        }
+        cv::minMaxLoc(mat, &result);
         return std::floor(result);
     }
 
-    static int getMax(cv::Mat mat, int start = 0, int end = -1)
+    static int getMax(cv::Mat mat)
     {
         double result;
-        if (mat.rows == 1)
-        {
-            if (end == -1) end = mat.cols;
-            cv::minMaxLoc(mat.colRange(start, end).clone(), NULL, &result);
-        }
-        else
-        {
-            if (end == -1) end = mat.rows;
-            cv::minMaxLoc(mat.rowRange(start, end).clone(), NULL, &result);
-        }
+        cv::minMaxLoc(mat, NULL, &result);
         return std::floor(result);
     }
 
@@ -182,7 +164,7 @@ public:
         // finding the peaks of the waves from the histogram
         int pointUp = -1;
         bool isPeak = false;
-        if (getValue_SC(rowHist, 0, 0) > threshold)
+        if (getIntValue_SC(rowHist, 0, 0) > threshold)
         {
             pointUp = 0;
             isPeak = true;
@@ -190,7 +172,7 @@ public:
         std::vector<std::vector<int>> wavePeaks;
         for (int i = 0; i < rowHist.rows; i++)
         {
-            int value = getValue_SC(rowHist, i, 0);
+            int value = getIntValue_SC(rowHist, i, 0);
             if (isPeak && value < threshold)
             {
                 if (i - pointUp > 2)
@@ -228,39 +210,68 @@ public:
         return fitted;
     }
 
-    cv::Mat cut(int lowerThreshold = 10)
+    cv::Mat cut(int minThreshold = 20, int minCharWidth = 5)
     {
+        if (!this->cutted.empty())
+        {
+            this->cutted.clear();
+        }
         // cut the characters in the plate detected
-        // TODO: bug?????!!!!!!!!!
         auto plateWidth = this->fitted.cols;
-        auto plateHeight = this->fitted.rows;
-        cv::Mat colHist;
-        cv::reduce(this->fitted, colHist, 0, cv::ReduceTypes::REDUCE_SUM, CV_32SC1);
-        colHist = colHist * (-1);
-        int start = 0, end = -1;
+        cv::Mat colHist = cv::Mat_<int>(1, plateWidth); // count the white pixel of every column
         for (int col = 0; col < plateWidth; col++)
         {
-            if (this->cutted.size() >= 7)
+            int count = cv::countNonZero(this->fitted.colRange(col, col + 1));
+            colHist.at<int>(0, col) = count;
+        }
+        std::vector<int> zeroCol;
+        for (int col = 0; col < plateWidth; col++)
+        {
+            // search for zero columns' index
+            if (colHist.at<int>(0, col) == 0)
             {
-                break;
+                zeroCol.emplace_back(col);
             }
-            cv::Mat temp;
-            auto whitePixelCount = getValue_SC(colHist, 0, col);
-            if (whitePixelCount == 0)
+        }
+        // std::cout << zeroCol.size() << std::endl;
+        // std::cout << cv::countNonZero(colHist) << std::endl;
+        // std::cout << plateWidth << std::endl;
+        for (auto zero_col : zeroCol)
+        {
+            std::cout << zero_col << " | ";
+        }
+        for (int i = 0; i < zeroCol.size() - 1; i++)
+        {
+            // std::cout << getIntValue_SC(colHist, 0, i) << " | ";
+            auto maxV = getMax(colHist.colRange(zeroCol[i], zeroCol[i + 1] + 1).clone());
+            if (zeroCol[i + 1] - zeroCol[i] >= minCharWidth && maxV >= minThreshold)
             {
-                if (col - start >= plateWidth * (1 / 8) && getMin(colHist) < -lowerThreshold)
+                this->cutted.emplace_back(this->fitted.colRange(zeroCol[i], zeroCol[i + 1]));
+            }
+        }
+        std::cout << std::endl << this->cutted.size();
+        // std::cout << this->cutted[3].type() << std::endl;
+        return this->cutted[0];
+    }
+
+    cv::Mat recog()
+    {
+        cv::Mat corner, scaled;
+        cv::resize(this->cutted[0].clone(), scaled, cv::Size(), 10, 10);
+        cv::cornerHarris(scaled, corner, 2, 3, 0.04);
+        std::cout << "scaled:" << scaled.size << std::endl;;
+        for (int r = 0; r < corner.rows; r++)
+        {
+            for (int c = 0; c < corner.cols; c++)
+            {
+                if (static_cast<int>(corner.at<uchar>(r, c)) > 200)
                 {
-                    end = col;
-                    this->cutted.emplace_back(this->fitted.rowRange(start, end).clone());
-                    start = col + 1;
-                }
-                else
-                {
-                    end = -1;
+                    cv::circle(scaled, cv::Point(c, r), 1, cv::Scalar(255, 255, 255), 2, 8, 0);
                 }
             }
         }
-        return this->cutted[0];
+        std::cout << scaled.type();
+        return scaled;
     }
 
     cv::Mat process()
@@ -271,7 +282,8 @@ public:
         fit();
         // std::cout << recog() << std::endl;
         // return this->extracted;
-        return cut();
+        cut();
+        return recog();
     }
 };
 
