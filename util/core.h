@@ -55,7 +55,9 @@ public:
         this->source = cv::imread(path, cv::IMREAD_COLOR);
         if (this->source.rows <= 250 || this->source.cols <= 300)
         {
-            cv::resize(this->source, this->source, cv::Size(), 1.5, 1.5, cv::INTER_CUBIC);
+            double a = 320.0 / this->source.rows, b = 500.0 / this->source.cols;
+            double ratio = std::max(a, b);
+            cv::resize(this->source, this->source, cv::Size(), ratio, ratio, cv::INTER_CUBIC);
         }
         std::cout << "source: " << this->source.size << std::endl;
         return this->source;
@@ -79,7 +81,7 @@ public:
         cv::filter2D(blurred, sobelY, CV_32F, maskY);
         sobelX = cv::abs(sobelX);
         sobelY = cv::abs(sobelY);
-        cv::Canny(blurred, canny, 250, 100, 3);
+        cv::Canny(blurred, canny, 350, 200, 3);
         this->processed = canny.clone();
         return canny;
     }
@@ -320,6 +322,14 @@ public:
             {
                 this->cutted.emplace_back(this->fitted.colRange(zeroCol[i], zeroCol[i + 1]));
             }
+        }
+        if (zeroCol[0] != 0 && zeroCol[1] - zeroCol[0] >= minCharWidth)
+        {
+            this->cutted.insert(this->cutted.begin(), this->fitted.colRange(0, zeroCol[0] + 1));
+        }
+        if (zeroCol.back() != plateWidth && plateWidth - zeroCol.back() >= minCharWidth)
+        {
+            this->cutted.insert(this->cutted.end(), this->fitted.colRange(zeroCol.back(), plateWidth));
         }
         std::cout << "cut:" << this->cutted.size() << std::endl;
         // std::cout << this->cutted[3].type() << std::endl;

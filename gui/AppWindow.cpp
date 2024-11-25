@@ -37,7 +37,7 @@ void AppWindow::selectImageSlot()
         scene->clear();
         scene->addPixmap(QPixmap::fromImage(result));
         ui->sourceImageDisplay->setScene(scene);
-        ui->sourceImageTitle->setText("selected: " + selectedFile + " width " + QString::number(results[0].cols));
+        // ui->sourceImageTitle->setText("selected: " + selectedFile + " width " + QString::number(results[0].cols));
     }
 }
 
