@@ -122,6 +122,71 @@ public:
         return this->marked;
     }
 
+    cv::Mat autoMorph(cv::Mat input, std::string process, cv::Point point = cv::Point(-1, -1))
+    {
+        cv::Mat result = input.clone();
+        cv::Mat elementX = cv::getStructuringElement(cv::MorphShapes::MORPH_RECT, cv::Size(25, 1));
+        cv::Mat elementY = cv::getStructuringElement(cv::MorphShapes::MORPH_RECT, cv::Size(1, 19));
+        for (int i = 0; i < process.length() - 2; i += 3)
+        {
+            std::string cmd = process.substr(i, 3);
+            int round = cmd.back() - '0';
+            cv::Mat element;
+            element = cmd[1] == 'x' ? elementX.clone() : elementY.clone();
+            if (cmd[0] == '+')
+            {
+                cv::dilate(result, result, element, point, round);
+            }
+            else
+            {
+                cv::erode(result, result, element, point, round);
+            }
+        }
+        return result;
+    }
+
+    cv::Mat find(double ratioMin = 2.2, double ratioMax = 4.0)
+    {
+        std::cout << "find" << std::endl;
+        cv::Mat edgeDetected = this->processed.clone();
+        // iteratively dilate and erode the image to find an area with relatively high density of edges, which might
+        // indicate that it is where the plate located
+        cv::Mat processed;
+        // cv::Mat elementX = cv::getStructuringElement(cv::MorphShapes::MORPH_RECT, cv::Size(25, 1));
+        // cv::Mat elementY = cv::getStructuringElement(cv::MorphShapes::MORPH_RECT, cv::Size(1, 19));
+        // cv::Point point(-1, -1);
+        // cv::dilate(edgeDetected, processed, elementX, point, 2);
+        // cv::erode(processed, processed, elementX, point, 4);
+        // cv::dilate(processed, processed, elementX, point, 2);
+        // cv::erode(processed, processed, elementY, point, 1);
+        // cv::dilate(processed, processed, elementY, point, 2);
+        processed = autoMorph(edgeDetected, "+x2-x4+x2-y1+y2");
+        this->processed = processed;
+
+        cv::Mat blurred;
+        cv::Mat temp = this->processed.clone();
+        cv::Mat contourImage = source.clone();
+        cv::medianBlur(temp, blurred, 15);
+        cv::medianBlur(blurred, blurred, 15);
+        std::vector<std::vector<cv::Point>> contourPoints;
+        cv::findContours(temp, contourPoints, cv::RetrievalModes::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+        cv::drawContours(contourImage, contourPoints, -1, {255, 0, 255}, 3);
+        this->marked = contourImage;
+        std::vector<cv::Point> rectPoints;
+        for (const auto & contourPoint : contourPoints)
+        {
+            cv::Rect rect = cv::boundingRect(cv::Mat(contourPoint));
+            auto ratio = (float)rect.width / (float)rect.height;
+            std::cout << "r: " << ratio << std::endl;
+            if (ratio >= ratioMin && ratio <= ratioMax)
+            {
+                this->extracted = this->source(rect);
+                return this->extracted;
+            }
+        }
+        return processed;
+    }
+
     cv::Mat rectBound(cv::Mat bImage)
     {
         cv::Mat canny;
@@ -236,10 +301,10 @@ public:
         // std::cout << zeroCol.size() << std::endl;
         // std::cout << cv::countNonZero(colHist) << std::endl;
         // std::cout << plateWidth << std::endl;
-        for (auto zero_col : zeroCol)
-        {
-            std::cout << zero_col << " | ";
-        }
+        // for (auto zero_col : zeroCol)
+        // {
+        //     std::cout << zero_col << " | ";
+        // }
         for (int i = 0; i < zeroCol.size() - 1; i++)
         {
             // std::cout << getIntValue_SC(colHist, 0, i) << " | ";
@@ -249,7 +314,7 @@ public:
                 this->cutted.emplace_back(this->fitted.colRange(zeroCol[i], zeroCol[i + 1]));
             }
         }
-        std::cout << std::endl << this->cutted.size();
+        std::cout << "cut" << this->cutted.size() << std::endl;
         // std::cout << this->cutted[3].type() << std::endl;
         return this->cutted[0];
     }
@@ -277,13 +342,15 @@ public:
     cv::Mat process()
     {
         edgeDetection();
-        morphProcess();
-        extract();
+        // morphProcess();
+        // extract();
+        find();
         fit();
         // std::cout << recog() << std::endl;
         // return this->extracted;
         cut();
-        return recog();
+        // recog();
+        return this->cutted[0];
     }
 };
 
