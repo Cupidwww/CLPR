@@ -31,23 +31,33 @@ void AppWindow::selectImageSlot()
     {
         auto selectedImage = core->readImage(selectedFile.toLocal8Bit().data());
         auto processed = core->process();
-        auto result = core->mat2QImage(processed);
+        results = processed;
+        auto result = core->mat2QImage(processed[0]);
         auto scene = new QGraphicsScene(this);
         scene->clear();
         scene->addPixmap(QPixmap::fromImage(result));
         ui->sourceImageDisplay->setScene(scene);
-        ui->sourceImageTitle->setText("selected: " + selectedFile);
+        ui->sourceImageTitle->setText("selected: " + selectedFile + " width " + QString::number(results[0].cols));
     }
 }
 
 void AppWindow::clearSelectionSlot()
 {
-    auto currentScene = ui->sourceImageDisplay->scene();
-    if (currentScene != nullptr)
+    // auto currentScene = ui->sourceImageDisplay->scene();
+    // if (currentScene != nullptr)
+    // {
+    //     currentScene->clear();
+    // }
+    // ui->sourceImageTitle->setText(QString::fromStdString(""));
+    // TODO: tiaoshi, jideshan
+    if (current == results.size() - 1)
     {
-        currentScene->clear();
+        current = -1;
     }
-    ui->sourceImageTitle->setText(QString::fromStdString(""));
+    current++;
+    ui->sourceImageDisplay->scene()->clear();
+    ui->sourceImageDisplay->scene()->addPixmap(QPixmap::fromImage(core->mat2QImage(results[current])));
+    ui->sourceImageTitle->setText("width " + QString::number(results[current].cols));
 }
 
 

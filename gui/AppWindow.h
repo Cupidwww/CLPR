@@ -20,6 +20,8 @@ private:
     void clearSelectionSlot();
     Core* core = nullptr;
     Ui::MainWindow* ui = nullptr;
+    int current;
+    std::vector<cv::Mat> results;
 };
 
 #endif //APPWINDOW_H

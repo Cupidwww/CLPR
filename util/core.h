@@ -53,7 +53,9 @@ public:
     cv::Mat readImage(std::string path)
     {
         this->source = cv::imread(path, cv::IMREAD_COLOR);
-        return source;
+        // cv::resize(this->source, this->source, cv::Size(), 2, 2);
+        std::cout << "source: " << this->source.size << std::endl;
+        return this->source;
     }
 
     cv::Mat edgeDetection()
@@ -177,7 +179,7 @@ public:
         {
             cv::Rect rect = cv::boundingRect(cv::Mat(contourPoint));
             auto ratio = (float)rect.width / (float)rect.height;
-            std::cout << "r: " << ratio << std::endl;
+            std::cout << "r: " << ratio << ((ratio >= ratioMin && ratio <= ratioMax) ? " ok" : " no") << std::endl;
             if (ratio >= ratioMin && ratio <= ratioMax)
             {
                 this->extracted = this->source(rect);
@@ -283,6 +285,8 @@ public:
         }
         // cut the characters in the plate detected
         auto plateWidth = this->fitted.cols;
+        minCharWidth = plateWidth / 31;
+        std::cout << this->fitted.size << std::endl;
         cv::Mat colHist = cv::Mat_<int>(1, plateWidth); // count the white pixel of every column
         for (int col = 0; col < plateWidth; col++)
         {
@@ -314,7 +318,7 @@ public:
                 this->cutted.emplace_back(this->fitted.colRange(zeroCol[i], zeroCol[i + 1]));
             }
         }
-        std::cout << "cut" << this->cutted.size() << std::endl;
+        std::cout << "cut:" << this->cutted.size() << std::endl;
         // std::cout << this->cutted[3].type() << std::endl;
         return this->cutted[0];
     }
@@ -339,7 +343,7 @@ public:
         return scaled;
     }
 
-    cv::Mat process()
+    auto process()
     {
         edgeDetection();
         // morphProcess();
@@ -350,7 +354,7 @@ public:
         // return this->extracted;
         cut();
         // recog();
-        return this->cutted[0];
+        return this->cutted;
     }
 };
 
